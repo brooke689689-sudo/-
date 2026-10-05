@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { safeNext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-export type AuthState = { error?: string; message?: string };
+export type AuthState = { error?: string; message?: string; email?: string };
 
 async function origin() {
   const h = await headers();
@@ -48,8 +48,8 @@ export async function emailAuth(_: AuthState, form: FormData): Promise<AuthState
   const password = String(form.get("password") ?? "");
   const next = safeNext(String(form.get("next") ?? "/"));
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "이메일 주소를 확인해 주세요." };
-  if (password.length < 8) return { error: "비밀번호는 8자 이상이어야 해요." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "이메일 주소를 확인해 주세요.", email };
+  if (password.length < 8) return { error: "비밀번호는 8자 이상이어야 해요.", email };
 
   const supabase = await createClient();
 
@@ -59,14 +59,14 @@ export async function emailAuth(_: AuthState, form: FormData): Promise<AuthState
       password,
       options: { emailRedirectTo: `${await origin()}/auth/callback?next=${encodeURIComponent(next)}` },
     });
-    if (error) return { error: message(error, "가입 중 문제가 생겼어요. 다시 시도해 주세요.") };
-    if (data.user && data.user.identities?.length === 0) return { error: AUTH_ERRORS.user_already_exists };
-    if (!data.session) return { message: `${email}로 인증 메일을 보냈어요. 메일의 링크를 누르면 가입이 완료됩니다.` };
+    if (error) return { error: message(error, "가입 중 문제가 생겼어요. 다시 시도해 주세요."), email };
+    if (data.user && data.user.identities?.length === 0) return { error: AUTH_ERRORS.user_already_exists, email };
+    if (!data.session) return { message: `${email}로 인증 메일을 보냈어요. 메일의 링크를 누르면 가입이 완료됩니다.`, email };
     await finishLogin(supabase, next);
   }
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return { error: message(error, "로그인 중 문제가 생겼어요. 다시 시도해 주세요.") };
+  if (error) return { error: message(error, "로그인 중 문제가 생겼어요. 다시 시도해 주세요."), email };
   await finishLogin(supabase, next);
   return {};
 }

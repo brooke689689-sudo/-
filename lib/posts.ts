@@ -10,10 +10,11 @@ export type ListFilters = {
   urgentOnly?: boolean;
   includeAdopted?: boolean;
   adoptedOnly?: boolean;
-  breedId?: number;
+  breedIds?: number[];
   sort?: "new" | "view";
   query?: string;
   page: number;
+  limit?: number;
 };
 
 const CARD_FIELDS =
@@ -30,19 +31,20 @@ export async function listPosts(supabase: Client, f: ListFilters) {
   if (f.categoryId) q = q.eq("category_id", f.categoryId);
   if (f.sido) q = q.eq("region_sido", f.sido);
   if (f.sex) q = q.eq("sex", f.sex);
-  if (f.breedId) q = q.eq("breed_id", f.breedId);
+  if (f.breedIds?.length) q = q.in("breed_id", f.breedIds);
   if (f.urgentOnly) q = q.eq("is_urgent", true);
   if (f.adoptedOnly) q = q.eq("status", "adopted");
   else if (!f.includeAdopted) q = q.eq("status", "active");
   const query = f.query?.replace(/[%_\\]/g, "").trim();
   if (query) q = q.ilike("title", `%${query}%`);
 
-  const from = (f.page - 1) * PAGE_SIZE;
+  const size = f.limit ?? PAGE_SIZE;
+  const from = (f.page - 1) * size;
   const ordered = q.order("status", { ascending: true });
   const { data, count, error } = await (f.sort === "view"
     ? ordered.order("view_count", { ascending: false })
     : ordered.order("created_at", { ascending: false })
-  ).range(from, from + PAGE_SIZE - 1);
+  ).range(from, from + size - 1);
 
   if (error) throw error;
   return { posts: data ?? [], total: count ?? 0 };

@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { PasswordField } from "@/components/PasswordField";
 import { emailAuth, type AuthState } from "./actions";
 
 export function EmailForm({ next }: { next: string }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [state, action, pending] = useActionState<AuthState, FormData>(emailAuth, {});
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (mode === "login" && state.error) passwordRef.current?.focus();
+  }, [mode, state.error]);
 
   return (
     <form action={action} className="space-y-3">
@@ -26,17 +31,21 @@ export function EmailForm({ next }: { next: string }) {
         ))}
       </div>
       <input
+        key={state.email ?? "email"}
         name="email"
         type="email"
         required
         autoComplete="email"
         placeholder="이메일"
+        defaultValue={state.email ?? ""}
         className="h-12 w-full rounded-xl border border-stone-200 px-4 outline-none focus:border-ink"
       />
       {mode === "signup" ? (
         <PasswordField name="password" autoComplete="new-password" placeholder="비밀번호 (8자 이상)" />
       ) : (
         <input
+          ref={passwordRef}
+          key={state.error ? "password-retry" : "password"}
           name="password"
           type="password"
           required

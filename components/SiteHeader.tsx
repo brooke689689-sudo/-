@@ -14,7 +14,7 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <img src="/icon-128.png" alt="" className="h-10 w-10" />
-          <span className="text-3xl font-black tracking-tight text-[#ff6a00]">안아줌</span>
+          <span className="text-3xl font-black tracking-tight text-[#1f8a4c]">안아줌</span>
         </Link>
         <form action="/" className="flex min-w-0 flex-1 items-center">
           <div className="flex h-12 min-w-0 flex-1 items-center rounded-full border border-stone-200 bg-white pr-1 pl-5 shadow-sm">
@@ -29,7 +29,7 @@ export async function SiteHeader() {
                 <path d="M4 7h16M4 12h16M4 17h10" />
               </svg>
             </span>
-            <button type="submit" className="h-10 shrink-0 rounded-full bg-[#ff6a00] px-5 text-sm font-bold text-white">
+            <button type="submit" className="h-10 shrink-0 rounded-full bg-[#1f8a4c] px-5 text-sm font-bold text-white">
               검색
             </button>
           </div>
@@ -41,39 +41,39 @@ export async function SiteHeader() {
                 <span className="max-w-24 truncate font-semibold text-stone-700">{profile?.nickname ?? "보호자"}</span>
                 <span className="text-stone-300">|</span>
                 <form action={logout}>
-                  <button type="submit" className="hover:text-[#ff6a00]">
+                  <button type="submit" className="hover:text-[#1f8a4c]">
                     로그아웃
                   </button>
                 </form>
               </>
             ) : (
               <>
-                <Link href="/login" className="hover:text-[#ff6a00]">
+                <Link href="/login" className="hover:text-[#1f8a4c]">
                   로그인
                 </Link>
                 <span className="text-stone-300">|</span>
-                <Link href="/login" className="hover:text-[#ff6a00]">
+                <Link href="/login" className="hover:text-[#1f8a4c]">
                   회원가입
                 </Link>
               </>
             )}
             <span className="text-stone-300">|</span>
-            <Link href="/policy/faq" className="hover:text-[#ff6a00]">
+            <Link href="/policy/faq" className="hover:text-[#1f8a4c]">
               고객센터
             </Link>
           </div>
           <div className="flex items-center gap-4 text-[11px] text-stone-500">
-            <Link href="/chats" className="flex flex-col items-center gap-0.5 hover:text-[#ff6a00]">
+            <Link href="/chats" className="flex flex-col items-center gap-0.5 hover:text-[#1f8a4c]">
               <ChatIcon />
               채팅
             </Link>
-            <Link href="/me" className="flex flex-col items-center gap-0.5 hover:text-[#ff6a00]">
+            <Link href="/me" className="flex flex-col items-center gap-0.5 hover:text-[#1f8a4c]">
               <UserIcon />
               마이페이지
             </Link>
           </div>
         </div>
-        <Link href={user ? "/me" : "/login"} className="shrink-0 text-sm font-bold text-[#ff6a00] sm:hidden">
+        <Link href={user ? "/me" : "/login"} className="shrink-0 text-sm font-bold text-[#1f8a4c] sm:hidden">
           {user ? "내 정보" : "로그인"}
         </Link>
       </div>
